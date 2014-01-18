@@ -1,0 +1,11 @@
+Show System Memory:
+    free -m
+
+Create 14MB Swapfile from Ramdisk:
+    mkdir /mnt/ram0
+    mkfs.ext3 -m 0 /dev/ram0
+    mount /dev/ram0 /mnt/ram0
+    dd bs=1024 count=14336 if=/dev/zero of=/mnt/ram0/swapfile
+    mkswap /mnt/ram0/swapfile
+    swapon /mnt/ram0/swapfile
+

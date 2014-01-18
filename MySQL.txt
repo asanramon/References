@@ -18,3 +18,5 @@ Granting Privilege to User:
     GRANT ALL ON *.* TO 'username'@'hostname';
     GRANT CREATE ON database_name.table_name TO 'username'@'hostname';
 
+Show Variables:
+    SHOW VARIABLES;
