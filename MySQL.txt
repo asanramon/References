@@ -11,4 +11,10 @@ Delete User:
 Show Table Colunm Names:
     SHOW Columns FROM 'database.table';
 
+Add User:
+    CREATE USER 'username'@'hostname' IDENTIFIED BY 'password';
+
+Granting Privilege to User:
+    GRANT ALL ON *.* TO 'username'@'hostname';
+    GRANT CREATE ON database_name.table_name TO 'username'@'hostname';
 

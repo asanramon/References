@@ -1,0 +1,14 @@
+Create Copy of Remote Github Repository:
+    git clone git@github.com:<username>/<repository_name>.git
+
+Create New Repository Locally:
+    mkdir repository_name
+    cd repository_name
+    git init
+    touch README
+    git add README
+    git commit -m "Initial Commit"
+
+Push Repository to Remote Github
+    git remote add origin git@github.com/<username>/repository_name.git
+    git push origin master
