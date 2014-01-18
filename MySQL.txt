@@ -1,0 +1,14 @@
+Change User Password:
+    UPDATE <mysql.user> SET Password = PASSWORD('<password>') WHERE User = '<username>';
+    FLUSH PRIVILEGES;
+
+    SET PASSWORD FOR '<username>'@'<hostname>' = PASSWORD('<password>');
+    FLUSH PRIVILEGES;
+
+Delete User:
+    DROP USER '<username>'@'<hostname>';
+
+Show Table Colunm Names:
+    SHOW Columns FROM 'database.table';
+
+
