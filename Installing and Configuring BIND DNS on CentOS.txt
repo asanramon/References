@@ -1,0 +1,125 @@
+Installing and Configuring BIND DNS on CentOS
+---------------------------------------------
+1. Install BIND package
+	* yum install bind -y
+2. Configure BIND settings
+	* vi /etc/named.conf
+		//
+		// named.conf
+		//
+		// Provided by Red Hat bind package to configure the ISC BIND named(8) DNS
+		// server as a caching only nameserver (as a localhost DNS resolver only).
+		//
+		// See /usr/share/doc/bind*/sample/ for example named configuration files.
+		//
+
+		acl "trusted_subnets" {
+			10.10.1.0/24;
+			10.10.2.0/24;
+			10.10.3.0/24;
+		};
+
+		options {
+			listen-on port 53 { 127.0.0.1; 10.10.2.2; };
+        		listen-on-v6 port 53 { ::1; };
+        		directory       "/var/named";
+        		dump-file       "/var/named/data/cache_dump.db";
+        		statistics-file "/var/named/data/named_stats.txt";
+        		memstatistics-file "/var/named/data/named_mem_stats.txt";
+        		allow-query     { localhost; trusted_subnets; };
+        		allow-recursion { trusted_subnets; };
+        		forwarders      {10.10.1.1;};
+        		recursion yes;
+
+        		dnssec-enable yes;
+        		dnssec-validation yes;
+        		dnssec-lookaside auto;
+
+        		/* Path to ISC DLV key */
+        		bindkeys-file "/etc/named.iscdlv.key";
+
+        		managed-keys-directory "/var/named/dynamic";
+		};
+
+		logging {
+		        channel default_debug {
+                		file "data/named.run";
+                		severity dynamic;
+        		};
+		};
+
+		zone "." IN {
+        		type hint;
+        		file "named.ca";
+		};
+
+		zone "linuxlab.asrnet.com" IN {
+        		type master;
+        		file "master-linuxlab.asrnet.com";
+        		allow-update {none;};
+		};
+
+		zone "2.10.10.in-addr.arpa" IN {
+        		type master;
+        		file "reverse-linuxlab.asrnet.com";
+        		allow-update {none;};
+		};
+
+		include "/etc/named.rfc1912.zones";
+		include "/etc/named.root.key";
+
+	* vi /var/named/master-linuxlab.asrnet.com
+		$TTL 3D
+		@       IN      SOA     dhcpdns.linuxlab.asrnet.com. root.linuxlab.asrnet.com. (
+        		201401071       ; serial #
+        		4H              ; refresh
+        		1H              ; retry
+        		1W              ; expiry
+        		1D              ; minimum-ttl
+		)
+		@               IN      NS      dhcpdns.linuxlab.asrnet.com.
+		dhcpdns         IN      A       10.10.2.2
+		chef            IN      A       10.10.2.3
+		repo            IN      A       10.10.2.4
+		ldap            IN      A       10.10.2.5
+		vcs             IN      A       10.10.2.6
+		web             IN      A       10.10.2.7
+		db              IN      A       10.10.2.8
+		jenkins         IN      A       10.10.2.9
+		puppet          IN      A       10.10.2.10
+		cobbler         IN      A       10.10.2.11
+		nagios          IN      A       10.10.2.12
+		hadoopdn1       IN      A       10.10.2.13
+		hadoopdn2       IN      A       10.10.2.14
+		hadoopnn1       IN      A       10.10.2.15
+		hadoopnn2       IN      A       10.10.2.16
+
+	* vi /var/named/reverse-linuxlab.asrnet.com
+		$TTL 3D
+		@       IN      SOA     dhcpdns.linuxlab.asrnet.com. root.linuxlab.asrnet.com. (
+        		201401071       ; serial #
+        		4H              ; refresh
+        		1H              ; retry
+        		1W              ; expiry
+        		1D              ; minimum-ttl
+		)
+		@       IN      NS      dhcpdns.linuxlab.asrnet.com.
+		2       IN      PTR     dhcpdns.linuxlab.asrnet.com.
+		3       IN      PTR     chef.linuxlab.asrnet.com.
+		4       IN      PTR     repo.linuxlab.asrnet.com.
+		5       IN      PTR     ldap.linuxlab.asrnet.com.
+		6       IN      PTR     vcs.linuxlab.asrnet.com.
+		7       IN      PTR     web.linuxlab.asrnet.com.
+		8       IN      PTR     db.linuxlab.asrnet.com.
+		9       IN      PTR     jenkins.linuxlab.com.
+		10      IN      PTR     puppet.linuxlab.com.
+		11      IN      PTR     cobbler.linuxlab.com.
+		12      IN      PTR     nagios.linuxlab.com.
+		13      IN      PTR     hadoopdn1.linuxlab.com.
+		14      IN      PTR     hadoopdn2.linuxlab.com.
+		15      IN      PTR     hadoopnn1.linuxlab.com.
+		16      IN      PTR     hadoopnn2.linuxlab.com.
+
+3. Start BIND.
+	* chkconfig named on
+	* service named start

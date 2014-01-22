@@ -1,0 +1,6 @@
+Install and Configure NTP Server on CentOS
+------------------------------------------
+1. Install NTP Server
+	* yum install ntp -y
+2. Configure NTP
+	* vi /etc/ntp.conf

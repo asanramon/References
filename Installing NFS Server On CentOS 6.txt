@@ -1,0 +1,66 @@
+Installing and Configuring NFS Server On CentOS 6
+-------------------------------------------------
+
+1. Install NFS Server from Repository
+	* yum install nfs-utils nfs-utils-lib
+
+2. Start Services
+	* chkconfig nfs on
+	* service rpcbind start
+	* service nfs start
+
+3. Creating Share Points
+	* vi /etc/exports
+	* add the following example share point to exports
+		/mnt 10.10.1.0/24(rw,sync)	#Share read/write /mnt directory with all systems in the 10.10.1.0 subnet.
+	* exportfs -a
+
+4. Open Firewall Ports for NFS
+	* vi /etc/sysconfig/nfs
+		* uncomment the following lines
+			LOCKD_TCPPORT=32803
+			LOCKD_UDPPORT=32769
+			MOUNTD_PORT=892
+			STATD_PORT=662
+			
+	* vi /etc/sysconfig/iptables
+		* add the following to the iptables (above -A INPUT -j REJECT --reject-with icmp-host-prohibited)
+			#settings for nfs
+			-A INPUT -s 10.10.1.0/24 -m state --state NEW -m udp -p udp --dport 2049 -j ACCEPT
+			-A INPUT -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 2049 -j ACCEPT
+			-A INPUT -s 10.10.1.0/24 -m state --state NEW -m udp -p udp --dport 111 -j ACCEPT
+			-A INPUT -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 111 -j ACCEPT
+			-A INPUT -s 10.10.1.0/24 -m state --state NEW -m udp -p udp --dport 32769 -j ACCEPT
+			-A INPUT -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 32803 -j ACCEPT
+			-A INPUT -s 10.10.1.0/24 -m state --state NEW -m udp -p udp --dport 892 -j ACCEPT
+			-A INPUT -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 892 -j ACCEPT
+			-A INPUT -s 10.10.1.0/24 -m state --state NEW -m udp -p udp --dport 875 -j ACCEPT
+			-A INPUT -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 875 -j ACCEPT
+			-A INPUT -s 10.10.1.0/24 -m state --state NEW -m udp -p udp --dport 662 -j ACCEPT
+			-A INPUT -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 662 -j ACCEPT
+			-A INPUT -s 10.10.2.0/24 -m state --state NEW -m udp -p udp --dport 2049 -j ACCEPT
+			-A INPUT -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 2049 -j ACCEPT
+			-A INPUT -s 10.10.2.0/24 -m state --state NEW -m udp -p udp --dport 111 -j ACCEPT
+			-A INPUT -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 111 -j ACCEPT
+			-A INPUT -s 10.10.2.0/24 -m state --state NEW -m udp -p udp --dport 32769 -j ACCEPT
+			-A INPUT -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 32803 -j ACCEPT
+			-A INPUT -s 10.10.2.0/24 -m state --state NEW -m udp -p udp --dport 892 -j ACCEPT
+			-A INPUT -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 892 -j ACCEPT
+			-A INPUT -s 10.10.2.0/24 -m state --state NEW -m udp -p udp --dport 875 -j ACCEPT
+			-A INPUT -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 875 -j ACCEPT
+			-A INPUT -s 10.10.2.0/24 -m state --state NEW -m udp -p udp --dport 662 -j ACCEPT
+			-A INPUT -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 662 -j ACCEPT
+			-A INPUT -s 10.10.3.0/24 -m state --state NEW -m udp -p udp --dport 2049 -j ACCEPT
+			-A INPUT -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 2049 -j ACCEPT
+			-A INPUT -s 10.10.3.0/24 -m state --state NEW -m udp -p udp --dport 111 -j ACCEPT
+			-A INPUT -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 111 -j ACCEPT
+			-A INPUT -s 10.10.3.0/24 -m state --state NEW -m udp -p udp --dport 32769 -j ACCEPT
+			-A INPUT -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 32803 -j ACCEPT
+			-A INPUT -s 10.10.3.0/24 -m state --state NEW -m udp -p udp --dport 892 -j ACCEPT
+			-A INPUT -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 892 -j ACCEPT
+			-A INPUT -s 10.10.3.0/24 -m state --state NEW -m udp -p udp --dport 875 -j ACCEPT
+			-A INPUT -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 875 -j ACCEPT
+			-A INPUT -s 10.10.3.0/24 -m state --state NEW -m udp -p udp --dport 662 -j ACCEPT
+			-A INPUT -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 662 -j ACCEPT
+	* service nfs restart
+	* service iptables restart

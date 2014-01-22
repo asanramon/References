@@ -1,0 +1,29 @@
+Installing and Configuring DHCP On CentOS
+-----------------------------------------
+1. Install DHCP
+	* yum install dhcp
+2. Enable DHCP service
+	* chkconfig dhcp on
+3. Modify DHCP configuration file
+	* vi /etc/dhcp/dhcpd.conf
+		* add the following entry:
+			ddns-update-style interim;
+			
+			subnet 10.10.2.0 netmask 255.255.255.0
+			{
+				range 10.10.2.50 10.10.2.254;
+				option subnet-mask 255.255.255.0;
+				option broadcast-address 10.10.2.255;
+				option domain-name "linuxlab.asrnet.com";
+				option domain-name-servers 10.10.2.2;
+				option routers 10.10.2.1;
+
+				host chef
+				{
+					hardware ethernet 00:50:56:95:07:03;
+					fixed-address 10.10.2.3;
+				}
+			}
+4. restart DHCP service
+	* service dhcpd restart
+				

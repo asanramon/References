@@ -1,0 +1,37 @@
+linuxlab.asrnet.com
+-------------------
+router.linuxlab.asrnet.com	10.10.1.50	00:50:56:95:07:00
+router.linuxlab.asrnet.com	10.10.2.1	00:50:56:95:07:01
+dhcpdns.linuxlab.asrnet.com	10.10.2.2	00:50:56:95:07:02
+chef.linuxlab.asrnet.com	10.10.2.3	00:50:56:95:07:03
+repo.linuxlab.asrnet.com	10.10.2.4	00:50:56:95:07:04
+ldap.linuxlab.asrnet.com	10.10.2.5	00:50:56:95:07:05
+vcs.linuxlab.asrnet.com		10.10.2.6	00:50:56:95:07:06
+web.linuxlab.asrnet.com		10.10.2.7	00:50:56:95:07:07
+db.linuxlab.asrnet.com		10.10.2.8	00:50:56:95:07:08
+jenkins.linuxlab.asrnet.com	10.10.2.9	00:50:56:95:07:09
+puppet.linuxlab.asrnet.com	10.10.2.10	00:50:56:95:07:10
+cobbler.linuxlab.asrnet.com	10.10.2.11	00:50:56:95:07:0A
+nagios.linuxlab.asrnet.com	10.10.2.12	00:50:56:95:07:0B
+hadoopdn1.linuxlab.asrnet.com	10.10.2.13	00:50:56:95:07:0C
+hadoopdn2.linuxlab.asrnet.com	10.10.2.14	00:50:56:95:07:0D
+hadoopnn1.linuxlab.asrnet.com	10.10.2.15	00:50:56:95:07:0E
+hadoopnn2.linuxlab.asrnet.com	10.10.2.16	00:50:56:95:07:0F
+
+winlab.asrnet.com
+-----------------
+router.winlab.asrnet.com	10.10.1.51	00:50:56:95:07:20
+router.winlab.asrnet.com	10.10.3.1	00:50:56:95:07:21
+dc1.winlab.asrnet.com		10.10.3.2	00:50:56:95:07:22
+dc2.winlab.asrnet.com		10.10.3.3	00:50:56:95:07:23
+rmtmgr.winlab.asrnet.com	10.10.3.4	00:50:56:95:07:24
+wsus.winlab.asrnet.com		10.10.3.5	00:50:56:95:07:25
+
+asrnet.com
+-----------
+router.asrnet.com		10.10.1.53	00:50:56:95:07:30
+router.asrnet.com		10.10.4.1	00:50:56:95:07:31
+dc1.asrnet.com			10.10.4.2	00:50:56:95:07:32
+dc2.asrnet.com			10.10.4.3	00:50:56:95:07:33
+wsus.asrnet.com			10.10.4.4	00:50:56:95:07:34
+db.asrnet.com			10.10.4.5	00:50:56:95:07:35

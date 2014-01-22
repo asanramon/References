@@ -1,0 +1,1 @@
+dig (bind-utils)	- a DNS utility to view DNS records.

@@ -1,0 +1,33 @@
+Add existing user to group
+--------------------------
+usermod -a -G group_name user_name
+
+Check services
+--------------
+chkconfig
+
+
+Restart network service
+-----------------------
+service network restart
+
+Check available disk space on all partitions
+--------------------------------------------
+df -H
+
+Check disk usage on a directory
+-------------------------------
+du /directory_path
+
+Reset Network Interface
+-----------------------
+1. Modify network interface eth0
+	* vi /etc/sysconfig/network-script/ifcfg-eth0
+		* delete HWADDR field
+2. Delete or Rename 70-persistent-net.rules file
+	* rm -f /etc/udev/rules.d/70-persistent-net.rules
+
+BIND Named Forwarders Would Not Work
+------------------------------------
+Log saying "verify failed due to bad signature"
+Solution: Correct date and time on the DNS server.

@@ -1,0 +1,215 @@
+Configuring Linux Router in CentOS
+----------------------------------
+
+Note:
+eth0 is the external network interface connecting to the internet.
+eth1 is the internal network interface.
+
+1. Configure network interface eth0
+	* vi /etc/sysconfig/network-scripts/ifcfg-eth0
+		BOOTPROTO=static
+		IPADDR=10.10.1.10
+		NETMASK=255.255.255.0
+		GATEWAY=10.10.1.1
+		ONBOOT=yes
+2. Configure network interface eth1
+	* vi /etc/sysconfig/network-scripts/ifcfg-eth0
+		BOOTPROTO=static
+		IPADDR=10.10.2.1
+		NETMASK=255.255.255.0
+		NETWORK=10.10.2.0
+		ONBOOT=yes
+3. Restart network service
+	* service network restart
+4. Configure system to allow forwarding of IPv4 packets between network interfaces.
+	* vi /etc/sysctl.conf
+		net.ipv4.ip_forward = 1
+	* sysctl -p
+5. Configure firewall to forward packets
+	* iptables –P INPUT DROP
+	* iptables –P FORWARD DROP
+	* iptables –P OUTPUT ACCEPT
+	* iptables –F
+	* iptables –t nat –A POSTROUTING –o eth0 –j MASQUERADE
+	* iptables –A INPUT –i lo –j ACCEPT
+	* iptables –A INPUT –i eth0 –m state --state ESTABLISHED,RELATED –j ACCEPT
+	* iptables –A INPUT –i eth1 –j ACCEPT
+
+	  # Allow ping
+	* iptables -A INPUT -i eth0 -s 10.10.1.0/24 -p icmp -j ACCEPT
+	* iptables -A INPUT -i eth0 -s 10.10.2.0/24 -p icmp -j ACCEPT
+	* iptables -A INPUT -i eth0 -s 10.10.3.0/24 -p icmp -j ACCEPT
+	* iptables -A INPUT -i eth0 -s 10.10.4.0/24 -p icmp -j ACCEPT
+
+	  # Allow ssh
+	* iptables -A INPUT –i eth0 -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 22 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 22 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 22 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.4.0/24 -m state --state NEW -m tcp -p tcp --dport 22 -j ACCEPT
+
+	  # Allow DNS
+	* iptables -A INPUT –i eth0 -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 53 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 53 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 53 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.4.0/24 -m state --state NEW -m tcp -p tcp --dport 53 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.1.0/24 -m state --state NEW -m udp -p udp --dport 53 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.2.0/24 -m state --state NEW -m udp -p udp --dport 53 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.3.0/24 -m state --state NEW -m udp -p udp --dport 53 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.4.0/24 -m state --state NEW -m udp -p udp --dport 53 -j ACCEPT
+
+	  # Allow MySQL
+	* iptables -A INPUT –i eth0 -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 3306 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 3306 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 3306 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.4.0/24 -m state --state NEW -m tcp -p tcp --dport 3306 -j ACCEPT
+
+	  # Allow NFS
+	* iptables -A INPUT –i eth0 -s 10.10.1.0/24 -m state --state NEW -m udp -p udp --dport 2049 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 2049 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.1.0/24 -m state --state NEW -m udp -p udp --dport 111 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 111 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.1.0/24 -m state --state NEW -m udp -p udp --dport 32769 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 32803 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.1.0/24 -m state --state NEW -m udp -p udp --dport 892 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 892 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.1.0/24 -m state --state NEW -m udp -p udp --dport 875 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 875 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.1.0/24 -m state --state NEW -m udp -p udp --dport 662 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 662 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.2.0/24 -m state --state NEW -m udp -p udp --dport 2049 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 2049 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.2.0/24 -m state --state NEW -m udp -p udp --dport 111 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 111 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.2.0/24 -m state --state NEW -m udp -p udp --dport 32769 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 32803 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.2.0/24 -m state --state NEW -m udp -p udp --dport 892 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 892 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.2.0/24 -m state --state NEW -m udp -p udp --dport 875 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 875 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.2.0/24 -m state --state NEW -m udp -p udp --dport 662 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 662 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.3.0/24 -m state --state NEW -m udp -p udp --dport 2049 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 2049 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.3.0/24 -m state --state NEW -m udp -p udp --dport 111 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 111 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.3.0/24 -m state --state NEW -m udp -p udp --dport 32769 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 32803 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.3.0/24 -m state --state NEW -m udp -p udp --dport 892 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 892 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.3.0/24 -m state --state NEW -m udp -p udp --dport 875 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 875 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.3.0/24 -m state --state NEW -m udp -p udp --dport 662 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 662 -j ACCEPT
+
+	  # Allow SAMBA
+	* iptables -A INPUT –i eth0 -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 445 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.1.0/24 -m state --state NEW -m udp -p udp --dport 445 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 137 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.1.0/24 -m state --state NEW -m udp -p udp --dport 137 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 138 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.1.0/24 -m state --state NEW -m udp -p udp --dport 138 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 139 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.1.0/24 -m state --state NEW -m udp -p udp --dport 139 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 445 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.2.0/24 -m state --state NEW -m udp -p udp --dport 445 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 137 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.2.0/24 -m state --state NEW -m udp -p udp --dport 137 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 138 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.2.0/24 -m state --state NEW -m udp -p udp --dport 138 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 139 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.2.0/24 -m state --state NEW -m udp -p udp --dport 139 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 445 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.3.0/24 -m state --state NEW -m udp -p udp --dport 445 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 137 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.3.0/24 -m state --state NEW -m udp -p udp --dport 137 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 138 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.3.0/24 -m state --state NEW -m udp -p udp --dport 138 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 139 -j ACCEPT
+	* iptables -A INPUT –i eth0 -s 10.10.3.0/24 -m state --state NEW -m udp -p udp --dport 139 -j ACCEPT
+	* iptables -A INPUT -i eth0 -j REJECT --reject-with icmp-host-prohibited
+
+	* iptables –A FORWARD –i eth0 –o eth1 –m state --state ESTABLISHED,RELATED –j ACCEPT
+	* iptables –A FORWARD –i eth0 –o eth1 –s 10.10.1.0/24 -p icmp –j ACCEPT
+	* iptables –A FORWARD –i eth0 –o eth1 –s 10.10.2.0/24 -p icmp –j ACCEPT
+	* iptables –A FORWARD –i eth0 –o eth1 –s 10.10.3.0/24 -p icmp –j ACCEPT
+	* iptables –A FORWARD –i eth0 –o eth1 –s 10.10.4.0/24 -p icmp –j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 22 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 22 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 22 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.4.0/24 -m state --state NEW -m tcp -p tcp --dport 22 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 53 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 53 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 53 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.4.0/24 -m state --state NEW -m tcp -p tcp --dport 53 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.1.0/24 -m state --state NEW -m udp -p udp --dport 53 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.2.0/24 -m state --state NEW -m udp -p udp --dport 53 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.3.0/24 -m state --state NEW -m udp -p udp --dport 53 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.4.0/24 -m state --state NEW -m udp -p udp --dport 53 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 3306 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 3306 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 3306 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.4.0/24 -m state --state NEW -m tcp -p tcp --dport 3306 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.1.0/24 -m state --state NEW -m udp -p udp --dport 2049 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 2049 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.1.0/24 -m state --state NEW -m udp -p udp --dport 111 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 111 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.1.0/24 -m state --state NEW -m udp -p udp --dport 32769 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 32803 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.1.0/24 -m state --state NEW -m udp -p udp --dport 892 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 892 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.1.0/24 -m state --state NEW -m udp -p udp --dport 875 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 875 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.1.0/24 -m state --state NEW -m udp -p udp --dport 662 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 662 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.2.0/24 -m state --state NEW -m udp -p udp --dport 2049 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 2049 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.2.0/24 -m state --state NEW -m udp -p udp --dport 111 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 111 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.2.0/24 -m state --state NEW -m udp -p udp --dport 32769 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 32803 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.2.0/24 -m state --state NEW -m udp -p udp --dport 892 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 892 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.2.0/24 -m state --state NEW -m udp -p udp --dport 875 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 875 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.2.0/24 -m state --state NEW -m udp -p udp --dport 662 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 662 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.3.0/24 -m state --state NEW -m udp -p udp --dport 2049 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 2049 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.3.0/24 -m state --state NEW -m udp -p udp --dport 111 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 111 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.3.0/24 -m state --state NEW -m udp -p udp --dport 32769 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 32803 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.3.0/24 -m state --state NEW -m udp -p udp --dport 892 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 892 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.3.0/24 -m state --state NEW -m udp -p udp --dport 875 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 875 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.3.0/24 -m state --state NEW -m udp -p udp --dport 662 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 662 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 445 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.1.0/24 -m state --state NEW -m udp -p udp --dport 445 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 137 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.1.0/24 -m state --state NEW -m udp -p udp --dport 137 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 138 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.1.0/24 -m state --state NEW -m udp -p udp --dport 138 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 139 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.1.0/24 -m state --state NEW -m udp -p udp --dport 139 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 445 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.2.0/24 -m state --state NEW -m udp -p udp --dport 445 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 137 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.2.0/24 -m state --state NEW -m udp -p udp --dport 137 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 138 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.2.0/24 -m state --state NEW -m udp -p udp --dport 138 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 139 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.2.0/24 -m state --state NEW -m udp -p udp --dport 139 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 445 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.3.0/24 -m state --state NEW -m udp -p udp --dport 445 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 137 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.3.0/24 -m state --state NEW -m udp -p udp --dport 137 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 138 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.3.0/24 -m state --state NEW -m udp -p udp --dport 138 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 139 -j ACCEPT
+	* iptables -A FORWARD –i eth0 –o eth1 -s 10.10.3.0/24 -m state --state NEW -m udp -p udp --dport 139 -j ACCEPT
+	* iptables -A FORWARD -i eth0 -j REJECT --reject-with icmp-host-prohibited
+	* iptables –A FORWARD –i eth1 –o eth0 –j ACCEPT
+	* iptables-save > /etc/sysconfig/iptables
+	* service iptables restart
