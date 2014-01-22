@@ -64,3 +64,6 @@ Installing and Configuring NFS Server On CentOS 6
 			-A INPUT -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 662 -j ACCEPT
 	* service nfs restart
 	* service iptables restart
+
+5. Install NFS Client Package on Client System
+	* yum -y install nfs-utils
