@@ -31,3 +31,12 @@ BIND Named Forwarders Would Not Work
 ------------------------------------
 Log saying "verify failed due to bad signature"
 Solution: Correct date and time on the DNS server.
+
+Syncronize time with time server
+--------------------------------
+ntpdate -q time.internet.com
+
+
+Enable AutoLogout
+-----------------
+export readonly TMOUT=600

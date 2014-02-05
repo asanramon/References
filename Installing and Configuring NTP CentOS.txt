@@ -1,0 +1,20 @@
+Install and Configure NTP Server on CentOS
+------------------------------------------
+1. Install NTP Service
+	* yum -y install ntp
+2. Configure NTP
+	* vi /etc/ntp.conf
+		# Allow access to certain subnet
+		restrict 10.10.2.0 mask 255.255.255.0 nomodify notrap
+
+		# Use the following servers as NTP servers
+		server 0.pool.ntp.org
+		server 1.pool.ntp.org
+		server 2.pool.ntp.org
+		server 3.pool.ntp.org
+3. Open Firewall Port
+	* vi /etc/sysconfig/iptables
+		-A INPUT -m state --state NEW -m udp -p udp -dport 123 -j ACCEPT
+4. Start NTP Service
+	* chkconfig ntpd on
+	* service ntpd start

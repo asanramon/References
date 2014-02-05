@@ -1,0 +1,29 @@
+Configuring Mirror Repository on CentOS
+---------------------------------------
+1. Install rsync and Apache
+	* yum -y install httpd rsync
+
+2. Create Repository Directories
+	* mkdir -p /repo/centos/6.5
+	* mkdir -p /var/www/html/repo
+	* ln -s /repo/centos/6.5 /repo/centos/6
+	* ln -s /repo/centos /var/www/html/centos
+
+3. Copy CentOS 6.5 Contents from Mirror Site
+	* rsync -avHPS rsync://mirrors.rit.edu/centos/6.5/ /repo/centos/6.5/
+
+4. Configure Apache
+	* vi /etc/httpd/conf.d/repo.conf
+		<VirtualHost *:80>
+		DocumentRoot "/var/www/html/repo"
+		<Directory "/var/www/html/repo">
+		        Options Indexes MultiViews FollowSymLinks
+		        AllowOverride None
+		        Order allow,deny
+		        Allow from all
+		</Directory>
+		</VirtualHost>
+	* service httpd restart
+5. Configure SELinux to Allow Directory Browsing
+	* setsebool -P httpd_enable_homedirs true
+	* chcon -R -t httpd_sys_content_t /var/www/html/repo

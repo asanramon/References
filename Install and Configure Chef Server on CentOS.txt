@@ -1,0 +1,19 @@
+Install and Configure Chef Server on CentOS
+-------------------------------------------
+1. Download Chef Server
+	* wget https://opscode-omnibus-packages.s3.amazonaws.com/el/6/x86_64/chef-server-11.0.10-1.el6.x86_64.rpm
+2. Install Chef Server
+	* rpm -ivh chef-server-11.0.10-1.el6.x86_64.rpm
+	* chef-server-ctl reconfigure
+	* chef-server-ctl test
+3. Open Firewall
+	* vi /etc/sysconfig/iptables
+		-A INPUT -m state --state NEW -m tcp -p tcp --dport 4000 -j ACCEPT
+		-A INPUT -m state --state NEW -m tcp -p tcp --dport 80 -j ACCEPT
+		-A INPUT -m state --state NEW -m tcp -p tcp --dport 443 -j ACCEPT
+		-A INPUT -m state --state NEW -m tcp -p tcp --dport 9462 -j ACCEPT
+	* service iptables restart
+4. Change Default Admin Password
+	* https://chef.linuxlab.asrnet.com
+	* login as admin, password is p@ssw0rd1
+	* enter new password

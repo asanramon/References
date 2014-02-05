@@ -1,1 +1,2 @@
 dig (bind-utils)	- a DNS utility to view DNS records.
+on_ac_power		- a utility to check whether the system is on AC power.

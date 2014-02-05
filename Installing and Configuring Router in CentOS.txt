@@ -126,6 +126,22 @@ eth1 is the internal network interface.
 	* iptables -A INPUT –i eth0 -s 10.10.3.0/24 -m state --state NEW -m udp -p udp --dport 138 -j ACCEPT
 	* iptables -A INPUT –i eth0 -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 139 -j ACCEPT
 	* iptables -A INPUT –i eth0 -s 10.10.3.0/24 -m state --state NEW -m udp -p udp --dport 139 -j ACCEPT
+
+	# Allow Chef
+	-A INPUT -i eth0 -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 4000 -j ACCEPT
+	-A INPUT -i eth0 -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 443 -j ACCEPT
+	-A INPUT -i eth0 -s 10.10.1.0/24 -m state --state NEW -m tcp -p tcp --dport 9462 -j ACCEPT
+	-A INPUT -i eth0 -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 4000 -j ACCEPT
+	-A INPUT -i eth0 -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 443 -j ACCEPT
+	-A INPUT -i eth0 -s 10.10.2.0/24 -m state --state NEW -m tcp -p tcp --dport 9462 -j ACCEPT
+	-A INPUT -i eth0 -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 4000 -j ACCEPT
+	-A INPUT -i eth0 -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 443 -j ACCEPT
+	-A INPUT -i eth0 -s 10.10.3.0/24 -m state --state NEW -m tcp -p tcp --dport 9462 -j ACCEPT
+	-A INPUT -i eth0 -s 10.10.4.0/24 -m state --state NEW -m tcp -p tcp --dport 4000 -j ACCEPT
+	-A INPUT -i eth0 -s 10.10.4.0/24 -m state --state NEW -m tcp -p tcp --dport 443 -j ACCEPT
+	-A INPUT -i eth0 -s 10.10.4.0/24 -m state --state NEW -m tcp -p tcp --dport 9462 -j ACCEPT
+
+	# Reject All
 	* iptables -A INPUT -i eth0 -j REJECT --reject-with icmp-host-prohibited
 
 	* iptables –A FORWARD –i eth0 –o eth1 –m state --state ESTABLISHED,RELATED –j ACCEPT
