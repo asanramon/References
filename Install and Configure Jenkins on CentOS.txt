@@ -1,0 +1,9 @@
+Install and Configure Jenkins on CentOS
+---------------------------------------
+1. Download and install latest Jenkins package
+	* wget http://pkg.jenkins-ci.org/redhat/jenkins-1.549-1.1.noarch.rpm
+	* rpm -i jenkins-1.549-1.1.noarch.rpm
+2. Install Java
+	* yum install java
+3. Install Apache
+	* yum install httpd

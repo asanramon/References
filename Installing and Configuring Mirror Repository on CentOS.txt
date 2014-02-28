@@ -1,7 +1,7 @@
 Configuring Mirror Repository on CentOS
 ---------------------------------------
 1. Install rsync and Apache
-	* yum -y install httpd rsync
+	* yum -y install httpd rsync mod_ssl
 
 2. Create Repository Directories
 	* mkdir -p /repo/centos/6.5
@@ -27,3 +27,26 @@ Configuring Mirror Repository on CentOS
 5. Configure SELinux to Allow Directory Browsing
 	* setsebool -P httpd_enable_homedirs true
 	* chcon -R -t httpd_sys_content_t /var/www/html/repo
+
+6. Configure SSL for HTTPS Access
+	* openssl genrsa -out ca.key 1024					# Generate private key
+	* openssl req -new -key ca.key -out ca.csr				# Generate CSR
+	* openssl x509 -req -days 365 -in ca.csr -signkey ca.key -out ca.crt	# Generate self-signed key
+	* cp ca.crt /etc/pki/tls/certs
+	* cp ca.key /etc/pki/tls/private/ca.key
+	* cp ca.csr /etc/pki/tls/private/ca.csr
+	* restorecon -RvF /etc/pki
+	* vi /etc/httpd/conf.d/repo.conf
+		<VirtualHost *:443>
+        		SSLEngine on
+        		SSLCertificateFile /etc/pki/tls/certs/ca.crt
+        		SSLCertificateKeyFile /etc/pki/tls/private/ca.key
+        		DocumentRoot "/var/www/html/repo/"
+        		<Directory "/var/www/html/repo">
+                		Options Indexes MultiViews FollowSymLinks
+                		AllowOverride None
+                		Order allow,deny
+                		Allow from all
+        		</Directory>
+        		ServerName repo.linuxlab.asrnet.com
+		</VirtualHost>
