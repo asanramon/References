@@ -1,7 +1,7 @@
 Installing and Configuring SAMBA on CentOS
 ------------------------------------------
 1. Install SAMBA Components from Repository
-	* yum install samba samba-commons
+	* yum install samba samba-common
 
 2. Create Share User Account and Group (ex. share:share)
 	* useradd -G share share
@@ -10,7 +10,7 @@ Installing and Configuring SAMBA on CentOS
 
 3. Configure Shared Directory (ex. /data)
 	chmod -R 770 /data
-	chmod -R root:share /data
+	chown -R root:share /data
 
 4. Open Firewall Ports for SAMBA			
 	* vi /etc/sysconfig/iptables

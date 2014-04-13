@@ -1,0 +1,24 @@
+Installing and Configuring Cobbler on CentOS
+--------------------------------------------
+1. Add EPEL repository to yum.
+	* rpm -Uhv http://download.fedora.redhat.com/pub/epel/6/i386/epel-release-6-5.noarch.rpm
+2. Install Cobbler and Apache
+	* yum -y install cobbler cobbler-web policycoreutils-python pykickstart
+3. Enable TFTP service
+	* vi /etc/xinetd.d/tftp
+		disable = no
+4. Edit Cobbler settings
+	* vi /etc/cobbler/settings
+		server = 10.10.2.11
+		next_server = 10.10.2.11
+5. Configure SELinux
+	* semanage fcontext -a -t public_content_rw_t "/var/lib/tftpboot/.*"
+	* semanage fcontext -a -t public_content_rw_t "/var/www/cobbler/images/.*"
+	* restorecon -R -v "/var/lib/tftpboot/"
+	* restorecon -R -v "/var/www/cobbler/images/.*"
+	* setsebool cobbler_anon_write on
+	* setsebool httpd_can_network_connect off
+	* setsebool httpd_can_network_connect_cobbler on
+	* setsebool cobbler_can_network_connect on
+	* setsebool cobbler_use_cifs on
+	* setsebool cobbler_use_nfs on

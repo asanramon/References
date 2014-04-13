@@ -17,6 +17,9 @@ hadoopdn1.linuxlab.asrnet.com	10.10.2.13	00:50:56:95:07:0C
 hadoopdn2.linuxlab.asrnet.com	10.10.2.14	00:50:56:95:07:0D
 hadoopnn1.linuxlab.asrnet.com	10.10.2.15	00:50:56:95:07:0E
 hadoopnn2.linuxlab.asrnet.com	10.10.2.16	00:50:56:95:07:0F
+ntpd.linuxlab.asrnet.com	10.10.2.17	00:50:56:95:07:1F
+nas.linuxlab.asrnet.com		10.10.2.19	00:50:56:95:07:21
+pxe.linuxlab.asrnet.com		10.10.2.20	00:50:56:95:07:20
 
 winlab.asrnet.com
 -----------------
@@ -34,4 +37,10 @@ router.asrnet.com		10.10.4.1	00:50:56:95:07:31
 dc1.asrnet.com			10.10.4.2	00:50:56:95:07:32
 dc2.asrnet.com			10.10.4.3	00:50:56:95:07:33
 wsus.asrnet.com			10.10.4.4	00:50:56:95:07:34
-db.asrnet.com			10.10.4.5	00:50:56:95:07:35
+vcenter.asrnet.com		10.10.4.10
+esxi1.asrnet.com		10.10.1.250
+esxi1.asrnet.com (IPMI)		10.10.1.240
+esxi2.asrnet.com		10.10.1.251
+esxi2.asrnet.com		10.10.1.241
+esxi3.asrnet.com		10.10.1.252
+esxi3.asrnet.com		10.10.1.242
